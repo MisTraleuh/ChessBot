@@ -1,0 +1,43 @@
+#chessboard {
+    width: 320px;
+    height: 320px;
+    border: 2px solid black;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.square {
+    width: 40px;
+    height: 40px;
+}
+
+.darkBrown {
+    background-color: #9e4f12;
+}
+
+.lightBrown {
+    background-color: 	#c3b076;
+}
+
+.BackAndWhiteTexts {
+    width: 200px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.headerTexts {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+.colorSelection {
+    display: flex;
+    align-items: center;
+}
+
+.colorSelection label {
+    margin-right: 10px;
+}
+
