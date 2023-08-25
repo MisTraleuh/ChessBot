@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Chess Bot",
-    "description": "Cette extension fait quelque chose",
+    "description": "A bot that helps you play chess on chess.com",
     "version": "1.0",
     "icons": {
         "16": "./assets/logo/16x16.png",
