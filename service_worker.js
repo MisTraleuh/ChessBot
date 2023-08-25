@@ -2,12 +2,15 @@ let lastContent = '';
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.text === 'report_back') {
-        lastContent = request.content; 
+        console.log(new Date().toLocaleTimeString(), 'content.js loaded');
+        lastContent = request.content;
     }
-});
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
    if (request.text === 'get_last_content') {
-       sendResponse(lastContent);
+        setTimeout(() => {
+            console.log(new Date().toLocaleTimeString(), 'service_worker.js loaded');
+            sendResponse(lastContent);
+        }, 5000);
+        return true;
    }
 });

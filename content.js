@@ -1,5 +1,5 @@
 function onWindowLoad() {
-    const content = document.querySelector(':root');
+    const content = document.querySelector('body');
     console.log(content);
     chrome.runtime.sendMessage({ text: 'report_back', content: content.outerHTML  }, (response) => {
         if (response) {
@@ -8,4 +8,6 @@ function onWindowLoad() {
     });
 }
 
-window.onload = onWindowLoad;
+window.onload = function () {
+    setTimeout(onWindowLoad, 5000);
+};

@@ -81,6 +81,16 @@ document.getElementById('colorChoice').addEventListener('change', function(e) {
 setupBoard('white');
 
 chrome.runtime.sendMessage({ text: 'get_last_content' }, (response) => {
-    const contentHTML = response;
-    console.log(new Date().toLocaleString(), contentHTML);
+    console.log(response);
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(response, 'text/html');
+    
+    const element = doc.querySelector('div.hover-square');
+    
+    console.log(new Date().toLocaleString());
+    if (element) {
+        console.log(element.outerHTML);
+    } else {
+        console.log("Element non trouve");
+    }
 });
