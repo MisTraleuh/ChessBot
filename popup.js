@@ -54,7 +54,6 @@ function setupBoard(selectedColor) {
             for (let color in initialConfiguration) {
                 for (let piece in initialConfiguration[color]) {
                     piece = initialConfiguration[color][piece];
-                    console.log(piece);
                     if (selectedColor === 'black' && piece[1] === i && piece[2] === j) {
                         const img = document.createElement('img');
                         img.src = `assets/pieces/${color}/${piece[0]}.png`;
@@ -66,7 +65,6 @@ function setupBoard(selectedColor) {
                     }
                 }
             }
-            
             chessboard.appendChild(square);
         }
     }
@@ -82,3 +80,7 @@ document.getElementById('colorChoice').addEventListener('change', function(e) {
 
 setupBoard('white');
 
+chrome.runtime.sendMessage({ text: 'get_last_content' }, (response) => {
+    const contentHTML = response;
+    console.log(new Date().toLocaleString(), contentHTML);
+});
