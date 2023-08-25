@@ -8,6 +8,4 @@ function onWindowLoad() {
     });
 }
 
-window.onload = function () {
-    setTimeout(onWindowLoad, 5000);
-};
+setInterval (onWindowLoad, 1000);

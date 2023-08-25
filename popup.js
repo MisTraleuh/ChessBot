@@ -80,17 +80,19 @@ document.getElementById('colorChoice').addEventListener('change', function(e) {
 
 setupBoard('white');
 
-chrome.runtime.sendMessage({ text: 'get_last_content' }, (response) => {
-    console.log(response);
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(response, 'text/html');
-    
-    const element = doc.querySelector('chess-board.board');
-    
-    console.log(new Date().toLocaleString());
-    if (element) {
-        console.log(element.outerHTML);
-    } else {
-        console.log("Element non trouve");
-    }
-});
+function fetchContent() {
+    chrome.runtime.sendMessage({ text: 'get_last_content' }, (response) => {
+        console.log(new Date().toLocaleString(), 'fetchContent loaded');
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(response, 'text/html');
+        const element = doc.querySelector('chess-board.board');
+
+        if (element) {
+            console.log(element.outerHTML);
+        } else {
+            console.log("Element non trouve");
+        }
+    });
+}
+
+setInterval(fetchContent, 1000);

@@ -7,10 +7,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 
    if (request.text === 'get_last_content') {
-        setTimeout(() => {
-            console.log(new Date().toLocaleTimeString(), 'service_worker.js loaded');
-            sendResponse(lastContent);
-        }, 5000);
+        console.log(new Date().toLocaleTimeString(), 'service_worker.js loaded');
+        sendResponse(lastContent);
         return true;
    }
 });
