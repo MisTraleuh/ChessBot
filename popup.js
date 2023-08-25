@@ -1,44 +1,44 @@
 const boardSize = 8;
 const chessboard = document.getElementById('chessboard');
 
-const initialConfiguration = {
-    'white': [
-        ['wr', 0, 0],
-        ['wn', 0, 1],
-        ['wb', 0, 2],
-        ['wk', 0, 3],
-        ['wq', 0, 4],
-        ['wb', 0, 5],
-        ['wn', 0, 6],
-        ['wr', 0, 7],
-        ['wp', 1, 0],
-        ['wp', 1, 1],
-        ['wp', 1, 2],
-        ['wp', 1, 3],
-        ['wp', 1, 4],
-        ['wp', 1, 5],
-        ['wp', 1, 6],
-        ['wp', 1, 7]
-    ],
-    'black': [
-        ['br', 7, 0],
-        ['bn', 7, 1],
-        ['bb', 7, 2],
-        ['bk', 7, 3],
-        ['bq', 7, 4],
-        ['bb', 7, 5],
-        ['bn', 7, 6],
-        ['br', 7, 7],
-        ['bp', 6, 0],
-        ['bp', 6, 1],
-        ['bp', 6, 2],
-        ['bp', 6, 3],
-        ['bp', 6, 4],
-        ['bp', 6, 5],
-        ['bp', 6, 6],
-        ['bp', 6, 7]
-    ]
-};
+let selectedColor = 'white';
+
+const initialConfiguration = [
+    /* Black pieces */
+    ['br2', 8, 8],
+    ['bn2', 8, 7],
+    ['bb2', 8, 6],
+    ['bq1', 8, 5],
+    ['bk1', 8, 4],
+    ['bb1', 8, 3],
+    ['bn1', 8, 2],
+    ['br1', 8, 1],
+    ['bp1', 7, 8],
+    ['bp1', 7, 7],
+    ['bp1', 7, 6],
+    ['bp1', 7, 5],
+    ['bp1', 7, 4],
+    ['bp1', 7, 3],
+    ['bp1', 7, 2],
+    ['bp1', 7, 1],
+    /* White pieces */
+    ['wp8', 2, 8],
+    ['wp7', 2, 7],
+    ['wp6', 2, 6],
+    ['wp5', 2, 5],
+    ['wp4', 2, 4],
+    ['wp3', 2, 3],
+    ['wp2', 2, 2],
+    ['wp1', 2, 1],
+    ['wr2', 1, 8],
+    ['wn2', 1, 7],
+    ['wb2', 1, 6],
+    ['wq1', 1, 5],
+    ['wk1', 1, 4],
+    ['wb1', 1, 3],
+    ['wn1', 1, 2],
+    ['wr1', 1, 1],
+]
 
 function setupBoard(selectedColor) {
     for (let i = 0; i < boardSize; i++) {
@@ -51,18 +51,16 @@ function setupBoard(selectedColor) {
             } else {
                 square.classList.add('black');
             }
-            for (let color in initialConfiguration) {
-                for (let piece in initialConfiguration[color]) {
-                    piece = initialConfiguration[color][piece];
-                    if (selectedColor === 'black' && piece[1] === i && piece[2] === j) {
-                        const img = document.createElement('img');
-                        img.src = `assets/pieces/${color}/${piece[0]}.png`;
-                        square.appendChild(img);
-                    } else if (selectedColor === 'white' && piece[1] === 7 - i && piece[2] === 7 - j) {
-                        const img = document.createElement('img');
-                        img.src = `assets/pieces/${color}/${piece[0]}.png`;
-                        square.appendChild(img);
-                    }
+            for (let piece in initialConfiguration) {
+                piece = initialConfiguration[piece];
+                if (selectedColor === 'black' && piece[1] === i + 1 && piece[2] === j + 1) {
+                    const img = document.createElement('img');
+                    img.src = `assets/pieces/${piece[0][0] === 'w' ? 'white' : 'black'}/${piece[0].substr(0, 2)}.png`;
+                    square.appendChild(img);
+                } else if (selectedColor === 'white' && piece[1] === 8 - i && piece[2] === 8 - j) {
+                    const img = document.createElement('img');
+                    img.src = `assets/pieces/${piece[0][0] === 'w' ? 'white' : 'black'}/${piece[0].substr(0, 2)}.png`;
+                    square.appendChild(img);
                 }
             }
             chessboard.appendChild(square);
@@ -74,11 +72,37 @@ function setupBoard(selectedColor) {
 document.getElementById('colorChoice').addEventListener('change', function(e) {
     const oldTiles = document.querySelectorAll('.square');
     oldTiles.forEach(tile => tile.remove());
-    let selectedColor = e.target.value;
+    selectedColor = e.target.value;
     setupBoard(selectedColor);
 });
 
-setupBoard('white');
+setupBoard(selectedColor);
+
+/*****************************************************
+*                 GET CONTENT OF PAGE                *
+*****************************************************/
+function parsePieces(content) {
+    let newContent = content.substr(content.indexOf('<!--/Effects-->') + 16);
+    newContent = newContent.substr(newContent.indexOf('<!--/Effects-->') + 15);
+    let pieces = newContent.split('</div>');
+    pieces.pop();
+    let piecesSorted = [];
+    for (let i = 0; i < pieces.length; i++) {
+        if (pieces[i].indexOf('element-pool') !== -1) {
+            piecesSorted.push([-1, -1]);
+            continue;
+        }
+        let positions = pieces[i].split(' ')[3].substr(7, 2);
+        let x = parseInt(positions[0]);
+        let y = parseInt(positions[1]);
+
+        piecesSorted.push([x, y]);
+    }
+    for (let i = 0; i < piecesSorted.length; i++) {
+        initialConfiguration[i][2] = piecesSorted[i][0];
+        initialConfiguration[i][1] = piecesSorted[i][1];
+    }
+}
 
 function fetchContent() {
     chrome.runtime.sendMessage({ text: 'get_last_content' }, (response) => {
@@ -88,7 +112,10 @@ function fetchContent() {
         const element = doc.querySelector('chess-board.board');
 
         if (element) {
-            console.log(element.outerHTML);
+            parsePieces(element.outerHTML);
+            const oldTiles = document.querySelectorAll('.square');
+            oldTiles.forEach(tile => tile.remove());
+            setupBoard(selectedColor);
         } else {
             console.log("Element non trouve");
         }

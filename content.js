@@ -1,11 +1,8 @@
 function onWindowLoad() {
     const content = document.querySelector('body');
-    console.log(content);
-    chrome.runtime.sendMessage({ text: 'report_back', content: content.outerHTML  }, (response) => {
-        if (response) {
-            console.log(response);
-        }
-    });
+    if (chrome.extension && !chrome.extension.lastError) {
+        chrome.runtime.sendMessage({ text: 'report_back', content: content.outerHTML  });
+    }
 }
 
 setInterval (onWindowLoad, 1000);
