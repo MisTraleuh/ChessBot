@@ -1,12 +1,20 @@
 # ♟️ Chess Bot
 
-<center> <img src="assets/logo/128x128.png"> </center>
+<p align="center">
+  <img src="assets/logo/128x128.png" alt="Chess Bot Logo">
+</p>
+
+> Chess Bot is a free bot for chess.com that guides you towards the best moves in a given position.
+
+![Demo](assets/exemples/exemple_extension.png)
+
+---
 
 ## 📝 Description
 
-Chess Bot is a free bot for chess.com for telling you the bests moves in a given position.
+Chess Bot integrates seamlessly with chess.com to provide real-time move suggestions. Improve your gameplay and surprise your opponents!
 
-![Chess Bot](assets/exemples/exemple_extension.png)
+---
 
 ## 📚 How to use
 
@@ -16,14 +24,15 @@ Chess Bot is a free bot for chess.com for telling you the bests moves in a given
 $> git clone https://github.com/MisTraleuh/ChessBot.git
 ```
 
-Go to chrome extensions and enable developer mode. Then click on "Load unpacked" and select the folder of the bot.
-
-Normally, the extension should be running 😄
+1. Navigate to chrome extensions.
+2. Enable developer mode.
+3. Click on "Load unpacked" and select the ChessBot directory.
+4. That's it! Your Chess Bot extension should now be running 😄
 
 ### 🏃‍♂️ Run
 
-Go on chess.com and play a game. When you want to know the best move, click on the extension icon and you will see the bests moves.
+Start a game on chess.com. If you're uncertain about a move, simply click on the Chess Bot extension icon to reveal the best moves available.
 
 ## 📝 License
 
-This project is MIT licensed. See [LICENSE](LICENSE) file for more information.
+This project is under the MIT license. For more details, check out the [LICENSE](LICENSE) file.
