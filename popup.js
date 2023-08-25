@@ -85,7 +85,7 @@ chrome.runtime.sendMessage({ text: 'get_last_content' }, (response) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(response, 'text/html');
     
-    const element = doc.querySelector('div.hover-square');
+    const element = doc.querySelector('chess-board.board');
     
     console.log(new Date().toLocaleString());
     if (element) {
