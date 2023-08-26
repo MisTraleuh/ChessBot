@@ -1,42 +1,51 @@
 const boardSize = 8;
 const chessboard = document.getElementById('chessboard');
 
+const pieceMap = {
+    'R': 'r',
+    'N': 'n',
+    'B': 'b',
+    'K': 'k',
+    'Q': 'q',
+    'P': 'p'
+};
+
 let selectedColor = 'white';
 
-const initialConfiguration = [
+let initialConfiguration = [
     /* Black pieces */
     ['br2', 8, 8],
-    ['bn2', 8, 7],
-    ['bb2', 8, 6],
-    ['bq1', 8, 5],
-    ['bk1', 8, 4],
-    ['bb1', 8, 3],
-    ['bn1', 8, 2],
-    ['br1', 8, 1],
-    ['bp1', 7, 8],
+    ['bn2', 7, 8],
+    ['bb2', 6, 8],
+    ['bq1', 5, 8],
+    ['bk1', 4, 8],
+    ['bb1', 3, 8],
+    ['bn1', 2, 8],
+    ['br1', 1, 8],
+    ['bp1', 8, 7],
     ['bp1', 7, 7],
-    ['bp1', 7, 6],
-    ['bp1', 7, 5],
-    ['bp1', 7, 4],
-    ['bp1', 7, 3],
-    ['bp1', 7, 2],
-    ['bp1', 7, 1],
+    ['bp1', 6, 7],
+    ['bp1', 5, 7],
+    ['bp1', 4, 7],
+    ['bp1', 3, 7],
+    ['bp1', 2, 7],
+    ['bp1', 1, 7],
     /* White pieces */
-    ['wp8', 2, 8],
-    ['wp7', 2, 7],
-    ['wp6', 2, 6],
-    ['wp5', 2, 5],
-    ['wp4', 2, 4],
-    ['wp3', 2, 3],
+    ['wp8', 8, 2],
+    ['wp7', 7, 2],
+    ['wp6', 6, 2],
+    ['wp5', 5, 2],
+    ['wp4', 4, 2],
+    ['wp3', 3, 2],
     ['wp2', 2, 2],
-    ['wp1', 2, 1],
-    ['wr2', 1, 8],
-    ['wn2', 1, 7],
-    ['wb2', 1, 6],
-    ['wq1', 1, 5],
-    ['wk1', 1, 4],
-    ['wb1', 1, 3],
-    ['wn1', 1, 2],
+    ['wp1', 1, 2],
+    ['wr2', 8, 1],
+    ['wn2', 7, 1],
+    ['wb2', 6, 1],
+    ['wq1', 5, 1],
+    ['wk1', 4, 1],
+    ['wb1', 3, 1],
+    ['wn1', 2, 1],
     ['wr1', 1, 1],
 ]
 
@@ -53,11 +62,11 @@ function setupBoard(selectedColor) {
             }
             for (let piece in initialConfiguration) {
                 piece = initialConfiguration[piece];
-                if (selectedColor === 'black' && piece[1] === i + 1 && piece[2] === j + 1) {
+                if (selectedColor === 'black' && piece[1] === j + 1 && piece[2] === i + 1) {
                     const img = document.createElement('img');
                     img.src = `assets/pieces/${piece[0][0] === 'w' ? 'white' : 'black'}/${piece[0].substr(0, 2)}.png`;
                     square.appendChild(img);
-                } else if (selectedColor === 'white' && piece[1] === 8 - i && piece[2] === 8 - j) {
+                } else if (selectedColor === 'white' && piece[1] === 8 - j && piece[2] === 8 - i) {
                     const img = document.createElement('img');
                     img.src = `assets/pieces/${piece[0][0] === 'w' ? 'white' : 'black'}/${piece[0].substr(0, 2)}.png`;
                     square.appendChild(img);
@@ -81,27 +90,23 @@ setupBoard(selectedColor);
 /*****************************************************
 *                 GET CONTENT OF PAGE                *
 *****************************************************/
-function parsePieces(content) {
-    let newContent = content.substr(content.indexOf('<!--/Effects-->') + 16);
-    newContent = newContent.substr(newContent.indexOf('<!--/Effects-->') + 15);
-    let pieces = newContent.split('</div>');
-    pieces.pop();
-    let piecesSorted = [];
-    for (let i = 0; i < pieces.length; i++) {
-        if (pieces[i].indexOf('element-pool') !== -1) {
-            piecesSorted.push([-1, -1]);
-            continue;
-        }
-        let positions = pieces[i].split(' ')[3].substr(7, 2);
-        let x = parseInt(positions[0]);
-        let y = parseInt(positions[1]);
 
-        piecesSorted.push([x, y]);
+let indexContent = 0;
+let lastMove = '';
+
+function parseMoves(moves) {
+    console.log("parseMoves => move:", moves);
+    let res = '';
+
+    for (move of moves) {
+        if (move.lastElementChild?.classList.contains('icon-font-chess')) {
+            res += move.lastElementChild.getAttribute('data-figurine') + move.innerText + '/';
+        } else {
+            res += move.innerText + '/';
+        }
     }
-    for (let i = 0; i < piecesSorted.length; i++) {
-        initialConfiguration[i][2] = piecesSorted[i][0];
-        initialConfiguration[i][1] = piecesSorted[i][1];
-    }
+    console.log("GetMoveFunction => res:", res);
+    return res;
 }
 
 function fetchContent() {
@@ -109,10 +114,15 @@ function fetchContent() {
         console.log(new Date().toLocaleString(), 'fetchContent loaded');
         const parser = new DOMParser();
         const doc = parser.parseFromString(response, 'text/html');
-        const element = doc.querySelector('chess-board.board');
+        const element = doc.querySelectorAll('.node');
 
-        if (element) {
-            parsePieces(element.outerHTML);
+        console.log("doc.querySelectorAll", element);
+        if (element && element.length > 0) {
+            if (lastMove == parseMoves(element).split("/").pop()) {
+                console.log("No new content");
+                return;
+            }
+            lastMove = parseMoves(element).split("/").pop();
             const oldTiles = document.querySelectorAll('.square');
             oldTiles.forEach(tile => tile.remove());
             setupBoard(selectedColor);
